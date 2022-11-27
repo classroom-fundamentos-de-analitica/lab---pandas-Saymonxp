@@ -1,398 +1,239 @@
 """
-Laboratorio de Programación Básica en Python para Manejo de Datos
+Laboratorio - Manipulación de Datos usando Pandas
 -----------------------------------------------------------------------------------------
 Este archivo contiene las preguntas que se van a realizar en el laboratorio.
-No puede utilizar pandas, numpy o scipy. Se debe utilizar solo las funciones de python
-básicas.
-Utilice el archivo `data.csv` para resolver las preguntas.
+Utilice los archivos `tbl0.tsv`, `tbl1.tsv` y `tbl2.tsv`, para resolver las preguntas.
 """
-import csv
+import pandas as pd
+
+tbl0 = pd.read_csv("tbl0.tsv", sep="\t")
+tbl1 = pd.read_csv("tbl1.tsv", sep="\t")
+tbl2 = pd.read_csv("tbl2.tsv", sep="\t")
+
+
 def pregunta_01():
     """
-    Retorne la suma de la segunda columna.
+    ¿Cuál es la cantidad de filas en la tabla `tbl0.tsv`?
     Rta/
-    214
+    40
     """
-    data = open("data.csv", "r").readlines()
-    data = [row[0:-1] for row in data]
-    data = [row.split() for row in data]
-    data = [row[1] for row in data]
-    sum = 0
-    for row in data:
-        sum += int(row)
-    return sum
+    rows = len(tbl0)
+    return rows
 
 
 def pregunta_02():
     """
-    Retorne la cantidad de registros por cada letra de la primera columna como la lista
-    de tuplas (letra, cantidad), ordendas alfabéticamente.
+    ¿Cuál es la cantidad de columnas en la tabla `tbl0.tsv`?
     Rta/
-    [
-        ("A", 8),
-        ("B", 7),
-        ("C", 5),
-        ("D", 6),
-        ("E", 14),
-    ]
+    4
     """
-    data = open("data.csv", "r").readlines()
-    data = [row[0:-1] for row in data]
-    data = [row.split() for row in data]
-    data = [row[0] for row in data]
-    conjuntoUnico = set(data)
-    diccionario = {}
-    respuesta = []
-    for clave in conjuntoUnico:
-        diccionario[clave] = 0
-    for row in data:
-        diccionario[row] += 1
-    clavesOrdenadas = sorted(diccionario)
-    for clave in clavesOrdenadas:
-        respuesta.append((clave,diccionario[clave]))
-    return respuesta
+    colm = len(tbl0.columns)
+    return colm
 
 
 def pregunta_03():
     """
-    Retorne la suma de la columna 2 por cada letra de la primera columna como una lista
-    de tuplas (letra, suma) ordendas alfabeticamente.
+    ¿Cuál es la cantidad de registros por cada letra de la columna _c1 del archivo
+    `tbl0.tsv`?
     Rta/
-    [
-        ("A", 53),
-        ("B", 36),
-        ("C", 27),
-        ("D", 31),
-        ("E", 67),
-    ]
+    A     8
+    B     7
+    C     5
+    D     6
+    E    14
+    Name: _c1, dtype: int64
     """
-    data = open("data.csv", "r").readlines()
-    data = [row[0:-1] for row in data]
-    data = [row.split() for row in data]
-    data = [[row[0], row[1]] for row in data]
-    columnaLetras = [row[0] for row in data]
-    conjuntoUnico = set(columnaLetras)
-    diccionario = {}
-    respuesta =[]
-    for clave in conjuntoUnico:
-        diccionario[clave] = 0
-    for row in data:
-        diccionario[row[0]] += int(row[1])
-    clavesOrdenadas = sorted(diccionario)
-    for clave in clavesOrdenadas:
-        respuesta.append((clave , diccionario[clave]))
-    return respuesta
+    letra = tbl0["_c1"].value_counts().sort_index(ascending=True)
+    return letra
+
 
 def pregunta_04():
     """
-    La columna 3 contiene una fecha en formato `YYYY-MM-DD`. Retorne la cantidad de
-    registros por cada mes, tal como se muestra a continuación.
+    Calcule el promedio de _c2 por cada letra de la _c1 del archivo `tbl0.tsv`.
     Rta/
-    [
-        ("01", 3),
-        ("02", 4),
-        ("03", 2),
-        ("04", 4),
-        ("05", 3),
-        ("06", 3),
-        ("07", 5),
-        ("08", 6),
-        ("09", 3),
-        ("10", 2),
-        ("11", 2),
-        ("12", 3),
-    ]
+    A    4.625000
+    B    5.142857
+    C    5.400000
+    D    3.833333
+    E    4.785714
+    Name: _c2, dtype: float64
     """
-    data = open("data.csv", "r").readlines()
-    data = [row[0:-1] for row in data]
-    data = [row.split() for row in data]
-    data = [row[2].split("-")[1] for row in data]
-    mesesDiferentes = sorted(set(data))
-    diccionario = {}
-    respuesta = []
-    for mes in mesesDiferentes:
-        diccionario[mes] = 0
-    for row in data:
-        diccionario[row] += 1
-    for key in diccionario:
-        respuesta.append((key ,diccionario[key]))
-    return respuesta
+    avg = tbl0.groupby("_c1")["_c2"].mean()
+    return avg
 
 
 def pregunta_05():
     """
-    Retorne una lista de tuplas con el valor maximo y minimo de la columna 2 por cada
-    letra de la columa 1.
+    Calcule el valor máximo de _c2 por cada letra en la columna _c1 del archivo
+    `tbl0.tsv`.
     Rta/
-    [
-        ("A", 9, 2),
-        ("B", 9, 1),
-        ("C", 9, 0),
-        ("D", 8, 3),
-        ("E", 9, 1),
-    ]
+    _c1
+    A    9
+    B    9
+    C    9
+    D    7
+    E    9
+    Name: _c2, dtype: int64
     """
-    csv = open("data.csv", "r").readlines()
-    data = []
-    for line in csv:
-        data.append([e.strip() for e in line.split("\t") ])
-
-    letters = {}
-    for row in data:
-        letter = row[0]
-        amount = int(row[1])
-        if letter not in letters:
-            letters[letter] = [amount, amount]
-        else:
-            letterMinAndMax= letters[letter]
-            if (amount > letterMinAndMax[0]):
-                letterMinAndMax[0] = amount
-            elif (amount < letterMinAndMax[1]):
-                letterMinAndMax[1] = amount
-
-    sortedLetters = {k: letters[k] for k in sorted(letters)}
-
-    respuesta = []
-
-    for letter, minAndMax in sortedLetters.items():
-        respuesta.append((letter,minAndMax[0],minAndMax[1]))
-    
-    return respuesta
+    max = tbl0.groupby("_c1")["_c2"].max()
+    return max
 
 
 def pregunta_06():
     """
-    La columna 5 codifica un diccionario donde cada cadena de tres letras corresponde a
-    una clave y el valor despues del caracter `:` corresponde al valor asociado a la
-    clave. Por cada clave, obtenga el valor asociado mas pequeño y el valor asociado mas
-    grande computados sobre todo el archivo.
+    Retorne una lista con los valores unicos de la columna _c4 de del archivo `tbl1.csv`
+    en mayusculas y ordenados alfabéticamente.
     Rta/
-    [
-        ("aaa", 1, 9),
-        ("bbb", 1, 9),
-        ("ccc", 1, 10),
-        ("ddd", 0, 9),
-        ("eee", 1, 7),
-        ("fff", 0, 9),
-        ("ggg", 3, 10),
-        ("hhh", 0, 9),
-        ("iii", 0, 9),
-        ("jjj", 5, 17),
-    ]
+    ['A', 'B', 'C', 'D', 'E', 'F', 'G']
     """
-    data = open("data.csv", "r").readlines()
-    data = [row[0:-1] for row in data]
-    data = [row.split()[4].split(",") for row in data]
-    data = [column.split(":") for row in data for column in row]
-    conjuntoPalabras = sorted(set([row[0] for row in data]))
-    diccionario = {}
-    respuesta = []
-    for letra in conjuntoPalabras:
-        diccionario[letra] = []
-    for letra in conjuntoPalabras:
-        for row in data:
-            if row[0] == letra:
-                diccionario[letra].append(int(row[1]))
-        maximo = max(diccionario[letra])
-        minimo = min(diccionario[letra])
-        respuesta.append((letra, int(minimo),int(maximo)))
-    return respuesta
+    rta = tbl1["_c4"].sort_values().unique()
+    ans = [x.upper() for x in rta]
+    return ans
 
 
 def pregunta_07():
     """
-    Retorne una lista de tuplas que asocien las columnas 0 y 1. Cada tupla contiene un
-    valor posible de la columna 2 y una lista con todas las letras asociadas (columna 1)
-    a dicho valor de la columna 2.
+    Calcule la suma de la _c2 por cada letra de la _c1 del archivo `tbl0.tsv`.
     Rta/
-    [
-        (0, ["C"]),
-        (1, ["E", "B", "E"]),
-        (2, ["A", "E"]),
-        (3, ["A", "B", "D", "E", "E", "D"]),
-        (4, ["E", "B"]),
-        (5, ["B", "C", "D", "D", "E", "E", "E"]),
-        (6, ["C", "E", "A", "B"]),
-        (7, ["A", "C", "E", "D"]),
-        (8, ["E", "D", "E", "A", "B"]),
-        (9, ["A", "B", "E", "A", "A", "C"]),
-    ]
+    _c1
+    A    37
+    B    36
+    C    27
+    D    23
+    E    67
+    Name: _c2, dtype: int64
     """
-    data = open("data.csv", "r").readlines()
-    data = [row[0:-1] for row in data]
-    data = [row.split() for row in data]
-    data = [[row[1], row[0]] for row in data]
-    numeros = sorted(set([row[0] for row in data]))
-    diccionario = {}
-    respuesta = []
-    for numero in numeros:
-        diccionario[numero] = []
-    for numero in numeros:
-        for row in data:
-            if row[0] == numero:
-                diccionario[numero].append(row[1])
-        respuesta.append((int(numero) , diccionario[numero] ))
-    return respuesta
+    suma = tbl0.groupby("_c1")["_c2"].sum()
+    return suma
 
 
 def pregunta_08():
     """
-    Genere una lista de tuplas, donde el primer elemento de cada tupla contiene  el valor
-    de la segunda columna; la segunda parte de la tupla es una lista con las letras
-    (ordenadas y sin repetir letra) de la primera  columna que aparecen asociadas a dicho
-    valor de la segunda columna.
+    Agregue una columna llamada `suma` con la suma de _c0 y _c2 al archivo `tbl0.tsv`.
     Rta/
-    [
-        (0, ["C"]),
-        (1, ["B", "E"]),
-        (2, ["A", "E"]),
-        (3, ["A", "B", "D", "E"]),
-        (4, ["B", "E"]),
-        (5, ["B", "C", "D", "E"]),
-        (6, ["A", "B", "C", "E"]),
-        (7, ["A", "C", "D", "E"]),
-        (8, ["A", "B", "D", "E"]),
-        (9, ["A", "B", "C", "E"]),
-    ]
+        _c0 _c1  _c2         _c3  suma
+    0     0   E    1  1999-02-28     1
+    1     1   A    2  1999-10-28     3
+    2     2   B    5  1998-05-02     7
+    ...
+    37   37   C    9  1997-07-22    46
+    38   38   E    1  1999-09-28    39
+    39   39   E    5  1998-01-26    44
     """
-    data = open("data.csv", "r").readlines()
-    data = [row[0:-1] for row in data]
-    data = [row.split() for row in data]
-    data = [[row[1], row[0]] for row in data]
-    numeros = sorted(set([row[0] for row in data]))
-    diccionario = {}
-    respuesta = []
-    for numero in numeros:
-        diccionario[numero] = []
-    for numero in numeros:
-        for row in data:
-            if row[0] == numero:
-                if not (row[1] in diccionario[numero]):
-                    diccionario[numero].append(row[1]) 
-        respuesta.append(( int(numero) , sorted(diccionario[numero])))
-    return respuesta 
-
+    tbl0["suma"] = tbl0["_c0"] + tbl0["_c2"]
+    return tbl0
 
 
 def pregunta_09():
     """
-    Retorne un diccionario que contenga la cantidad de registros en que aparece cada
-    clave de la columna 5.
+    Agregue el año como una columna al archivo `tbl0.tsv`.
     Rta/
-    {
-        "aaa": 13,
-        "bbb": 16,
-        "ccc": 23,
-        "ddd": 23,
-        "eee": 15,
-        "fff": 20,
-        "ggg": 13,
-        "hhh": 16,
-        "iii": 18,
-        "jjj": 18,
-    }
+        _c0 _c1  _c2         _c3  year
+    0     0   E    1  1999-02-28  1999
+    1     1   A    2  1999-10-28  1999
+    2     2   B    5  1998-05-02  1998
+    ...
+    37   37   C    9  1997-07-22  1997
+    38   38   E    1  1999-09-28  1999
+    39   39   E    5  1998-01-26  1998
     """
-    data = open("data.csv", "r").readlines()
-    data = [row[0:-1] for row in data]
-    data = [row.split()[4].split(",") for row in data]
-    data = [column.split(":") for row in data for column in row]
-    conjuntoPalabras = sorted(set([row[0] for row in data]))
-    diccionario = {}
-    respuesta = {}
-    for letra in conjuntoPalabras:
-        diccionario[letra] = []
-    for letra in conjuntoPalabras:
-        total = 0
-        for row in data:
-            if row[0] == letra:
-                total += 1 
-        respuesta[letra] = total
-    return respuesta
+    tbl0['year'] = tbl0['_c3'].apply(lambda x: x[0:4])
+    return tbl0
 
 
 def pregunta_10():
     """
-    Retorne una lista de tuplas contengan por cada tupla, la letra de la columna 1 y la
-    cantidad de elementos de las columnas 4 y 5.
+    Construya una tabla que contenga _c1 y una lista separada por ':' de los valores de
+    la columna _c2 para el archivo `tbl0.tsv`.
     Rta/
-    [
-        ("E", 3, 5),
-        ("A", 3, 4),
-        ("B", 4, 4),
-        ...
-        ("C", 4, 3),
-        ("E", 2, 3),
-        ("E", 3, 3),
-    ]
+                                   _c1
+      _c0
+    0   A              1:1:2:3:6:7:8:9
+    1   B                1:3:4:5:6:8:9
+    2   C                    0:5:6:7:9
+    3   D                  1:2:3:5:5:7
+    4   E  1:1:2:3:3:4:5:5:5:6:7:8:8:9
     """
-    respuesta = []
-    data = open("data.csv", "r").readlines()
-    data = [row[0:-1] for row in data]
-    data = [row.split() for row in data]
-    data = [[row[0], str(len(row[3].split(","))), str(len(row[4].split(",")))] for row in data]
-    [respuesta.append((row[0],int(row[1]),int(row[2]))) for row in data]
-    return respuesta
-
+    otra=pd.DataFrame()
+    otra["_c1"]= tbl0["_c1"]
+    otra["_c2"]= tbl0["_c2"].astype(str)
+    otra = otra.sort_values(by="_c2", ascending=True)
+    rta= pd.DataFrame()
+    rta["_c2"] = otra.groupby('_c1')['_c2'].apply(':'.join)
+    return rta
 
 
 def pregunta_11():
     """
-    Retorne un diccionario que contengan la suma de la columna 2 para cada letra de la
-    columna 4, ordenadas alfabeticamente.
+    Construya una tabla que contenga _c0 y una lista separada por ',' de los valores de
+    la columna _c4 del archivo `tbl1.tsv`.
     Rta/
-    {
-        "a": 122,
-        "b": 49,
-        "c": 91,
-        "d": 73,
-        "e": 86,
-        "f": 134,
-        "g": 35,
-    }
+        _c0      _c4
+    0     0    b,f,g
+    1     1    a,c,f
+    2     2  a,c,e,f
+    3     3      a,b
+    ...
+    37   37  a,c,e,f
+    38   38      d,e
+    39   39    a,d,f
     """
-    data = []
-    csv = open("data.csv", "r").readlines()
-    for line in csv:
-        data.append([e.strip() for e in line.split("\t") ])
-    count = {}
-    for row in data:
-        quantity = int(row[1])
-        letters = row[3].split(",")
-        for letter in letters:
-            if letter not in count:
-                count[letter] = 0
-            count[letter] += quantity
-    
-    respuesta = {k: count[k] for k in sorted(count)}
-    return respuesta
+    other = tbl1.pivot_table(values="_c4",index="_c0",aggfunc=sorted)
+    other['_c4'] = other['_c4'].map(",".join)
+    other = other.reset_index()
+    return other
+
 
 def pregunta_12():
     """
-    Genere un diccionario que contengan como clave la columna 1 y como valor la suma de
-    los valores de la columna 5 sobre todo el archivo.
+    Construya una tabla que contenga _c0 y una lista separada por ',' de los valores de
+    la columna _c5a y _c5b (unidos por ':') de la tabla `tbl2.tsv`.
     Rta/
-    {
-        'A': 177,
-        'B': 187,
-        'C': 114,
-        'D': 136,
-        'E': 324
-    }
+        _c0                                  _c5
+    0     0        bbb:0,ddd:9,ggg:8,hhh:2,jjj:3
+    1     1              aaa:3,ccc:2,ddd:0,hhh:9
+    2     2              ccc:6,ddd:2,ggg:5,jjj:1
+    ...
+    37   37                    eee:0,fff:2,hhh:6
+    38   38                    eee:0,fff:9,iii:2
+    39   39                    ggg:3,hhh:8,jjj:5
     """
-    listaSumar = []
-    respuesta = {}
-    data = open("data.csv", "r").readlines()
-    data = [row[0:-1] for row in data]
-    data = [row.split() for row in data]
-    print(data)
-    data = [[row[0], sum([int(fila.split(":")[1]) for fila in row[4].split(",")])] for row in data]
-    #[print(row[0]+ "," + str(row[1])) for row in data]
-    [listaSumar.append( [row[0] , row[1]]) for row in data]
-    print(listaSumar)
-    for fila in listaSumar:
-        keys = respuesta.keys()
-        if fila[0] in keys:
-            respuesta[fila[0]] += fila[1]
-        else:
-            respuesta[fila[0]] = fila[1]
-    return respuesta
+    tbl2['_c5b'] = tbl2['_c5b'].map(str)
+    tbl2['_c5'] = tbl2['_c5a'] + ":" + tbl2['_c5b']
+    tabla = tbl2.pivot_table(values="_c5",index="_c0",aggfunc=sorted)
+    tabla['_c5'] = tabla['_c5'].map(",".join)
+    tabla = tabla.reset_index()
+    return tabla
+
+
+def pregunta_13():
+    """
+    Si la columna _c0 es la clave en los archivos `tbl0.tsv` y `tbl2.tsv`, compute la
+    suma de tbl2._c5b por cada valor en tbl0._c1.
+    Rta/
+    _c1
+    A    146
+    B    134
+    C     81
+    D    112
+    E    275
+    Name: _c5b, dtype: int64
+    """
+    nuevaTabla = pd.merge(tbl2,tbl0,on="_c0")
+    return nuevaTabla.groupby('_c1')['_c5b'].sum()
+Footer
+© 2022 GitHub, Inc.
+Footer navigation
+
+    Terms
+    Privacy
+    Security
+    Status
+    Docs
+    Contact GitHub
+    Pricing
+    API
+    Training
+    Blog
+    About
+
