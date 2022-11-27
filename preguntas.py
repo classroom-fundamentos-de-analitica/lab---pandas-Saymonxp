@@ -221,19 +221,4 @@ def pregunta_13():
     """
     nuevaTabla = pd.merge(tbl2,tbl0,on="_c0")
     return nuevaTabla.groupby('_c1')['_c5b'].sum()
-Footer
-© 2022 GitHub, Inc.
-Footer navigation
-
-    Terms
-    Privacy
-    Security
-    Status
-    Docs
-    Contact GitHub
-    Pricing
-    API
-    Training
-    Blog
-    About
 
